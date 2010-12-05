@@ -28,6 +28,7 @@ config.on('written', function() {
 
   // read the previously written config file and attempt
   // to read a non-existing file
+  //require('path').join(process.env.HOME, '.home_cfg');
   readConfig.read(['defaults.cfg', 'non-existant.cfg']);
 
   // react on the readfile event
