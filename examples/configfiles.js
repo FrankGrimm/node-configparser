@@ -1,5 +1,7 @@
+// Example for reading and writing config files
 var ConfigParser = require('../lib/configparser/configparser').ConfigParser;
 
+// initialize an instance with a few default values
 var sampleDefaults = {rootkey:'rootValue',
   rootkey2: 42,
   section1: {
@@ -11,30 +13,41 @@ var sampleDefaults = {rootkey:'rootValue',
     bar: 'foo'
     }
   }
-
 var config = new ConfigParser(sampleDefaults);
 
-config.on('error', function(err) {
-  console.log("[ERRROR:config] " + err.message);
-});
-
-// write defaults
+// write the default configuration to a write stream
+// with the default line delimiter (\n)
+// and closing the write stream afterwards
 config.write(require('fs').createWriteStream('defaults.cfg'));
+
+// react on the written event
 config.on('written', function() {
 
-var readConfig = new ConfigParser();
+  // initialize a new ConfigParser instance
+  var readConfig = new ConfigParser();
 
-readConfig.read(['defaults.cfg', 'non-existant.cfg']);
-readConfig.on('readfile', function(filename) {
-  console.log("File <" + filename + "> read");
+  // read the previously written config file and attempt
+  // to read a non-existing file
+  readConfig.read(['defaults.cfg', 'non-existant.cfg']);
 
-  readConfig.write(process.stdout, '\n', true);
-}).on('error', function(err) {
-  console.log("[ERROR:readConfig] " + err.message);
+  // react on the readfile event
+  readConfig.on('readfile', function(filename) {
+
+    // state now represents the persistant state in the file
+    console.log("File <" + filename + "> read");
+  
+    // dump the state of the configuration to STDOUT with \n as the line delimiter
+    // the third parameter indicates that the write stream should not be closed
+    // after writing the data
+    readConfig.write(process.stdout, '\n', true);
+  }).on('error', function(err) {
+    // an error was thrown in the newly created configuration
+    console.log("[ERROR:readConfig] " + err.message);
+  });
+
 });
 
-});
-
+// just in case
 process.on('uncaughtException', function(err) {
   console.log(err.message);
   console.log(err.stack);

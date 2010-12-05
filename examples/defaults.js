@@ -1,9 +1,10 @@
+// Example for working with default values
 var ConfigParser = require('../lib/configparser/configparser').ConfigParser;
 
 var sampleDefaults = {rootkey:'rootValue',
-  rootkey2: 42,
+  rootkey2: '42',
   section1: {
-    section1key1: 1234,
+    section1key1: '1234',
     section1key2: 'foobar'
     },
   section2: {
@@ -14,15 +15,15 @@ var sampleDefaults = {rootkey:'rootValue',
 
 var config = new ConfigParser(sampleDefaults);
 
+console.log("Defaults:");
 console.log(config.defaults());
-console.log(config.sections());
 
-console.log(config.has_section("DEFAULT")); // false
-console.log(config.has_section("nope")); // false
-console.log(config.has_section("section1")); // true
-
+console.log("Options in DEFAULT:");
 console.log(config.options()); // []
+
+console.log("Options in section1:");
 console.log(config.options("section1")); // ['section1key1', 'section1key2']
+
+console.log("Options in non-existing section:");
 console.log(config.options("nope")); // []
 
-config.write(require('fs').createWriteStream('./defaults.cfg'));
