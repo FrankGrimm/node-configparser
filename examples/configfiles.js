@@ -31,10 +31,15 @@ config.on('written', function() {
   readConfig.read(['defaults.cfg', 'non-existant.cfg']);
 
   // react on the readfile event
-  readConfig.on('readfile', function(filename) {
+  readConfig.on('readfile', function(err, filename) {
+    // check if there was an error
+    if (err) {
+      console.log('Error "' + err.message + '" when reading <' + filename + '>');
+      return;
+    }
 
     // state now represents the persistant state in the file
-    console.log("File <" + filename + "> read");
+    console.log("File <" + filename + "> read.");
   
     // dump the state of the configuration to STDOUT with \n as the line delimiter
     // the third parameter indicates that the write stream should not be closed
@@ -42,6 +47,9 @@ config.on('written', function() {
     readConfig.write(process.stdout, '\n', true);
   }).on('error', function(err) {
     // an error was thrown in the newly created configuration
+    // this MUST be handled when working with files or streams
+    // although it's not necessary to act on this errors. it exists
+    // primarily for logging purposes
     console.log("[ERROR:readConfig] " + err.message);
   });
 
