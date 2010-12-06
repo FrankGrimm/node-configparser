@@ -1,4 +1,13 @@
-{ "name" : "node-configparser"
-, "version": "0.1.0"
-, "main" : "./lib/configparser"
+{
+  "name": "node-configparser",
+  "version": "0.1.0",
+  "main": "./lib/configparser",
+  "engines": {
+    "node": ">= 0.3.0"
+  },
+  "description": "Configuration parser for node.",
+  "author": "Frank Grimm <frankgrimm+nodeconfigparser@gmail.com> (http://frankgrimm.net)",
+  "directories": {
+    "lib": "lib"
+  }
 }
