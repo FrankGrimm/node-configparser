@@ -15,6 +15,20 @@ var generateDataSet = function(count, len) {
   return res;
 }
 
+var generateBooleanDataSet = function(count) {
+  var res = [];
+
+  while(count--) {
+    if (Math.random() >= 0.5) {
+      res.push('true');
+    } else {
+      res.push('false');
+    }
+  }
+
+  return res;
+}
+
 var ops = 0;
 var startT = null;
 function start() {
@@ -52,10 +66,43 @@ function stop(message) {
   stop('get operation');
 
   start();
+  for (var i = 0, l = dataSet.length; i < l; i++) inst.get('test', 'invalid'+i, 'abc');
+  ops = dataSetSize;
+  stop('get local default');
+
+  start();
   ops = 2 * dataSetSize;
   for (var i = 0, l = ops; i < l; i++) {
     inst.has_option('test', 'item' + i);
   }
   stop('has_option lookups');
+
+  start();
+  var boolDataSet = generateBooleanDataSet(dataSetSize);
+  ops = dataSetSize;
+  stop('boolean dataset generation');
+
+  start();
+  ops = dataSetSize;
+  var binst = new ConfigParser();
+  binst.add_section('test');
+  for (var i = 0, l = boolDataSet.length; i < l; i++) binst.set('test', 'item' + i, boolDataSet[i]);
+  stop('set operation (for boolean strings)');
+
+  start();
+  ops = dataSetSize;
+  for (var i = 0; i < ops; i++) {
+    var b = binst.get('test', 'item' + i)
+  }
+  stop('boolean get');
+
+  start();
+  ops = dataSetSize;
+  for (var i = 0; i < ops; i++) {
+    var b = binst.getboolean('test', 'item' + i);
+  }
+  stop('boolean getboolean');
+
+  
 })(100000);
 
