@@ -37,6 +37,49 @@ c2.on('change', function(section, option, oldValue, newValue) {
   c2_changecount++;
 });
 
+// section subscriptions
+var c2_change_default = 0;
+c2.on('change#default', function(section, option, oldValue, newValue) {
+  assert.ok(c2 === this);
+  assert.ok(section);
+  assert.equal(section, 'default');
+  
+  c2_change_default++;
+});
+
+var c2_change_section = 0;
+c2.on('change#section', function(section, option, oldValue, newValue) {
+  assert.ok(c2 === this);
+  assert.ok(section);
+  assert.equal(section, 'section');
+
+  c2_change_section++;
+});
+
+var c2_change_typed = 0;
+c2.on('change#typed', function(section, option, oldValue, newValue) {
+  assert.ok(c2 === this);
+  assert.ok(section);
+  assert.equal(section, 'typed');
+  c2_change_typed++;
+});
+
+var c2_change_newsection = 0;
+var hadSecondChangeCallback = false;
+c2.on('change#newsection', function(section, option, oldValue, newValue) {
+  assert.ok(c2 === this);
+  assert.ok(section);
+  assert.equal(section, 'newsection');
+  c2_change_newsection++;
+});
+c2.on('change#newsection', function(section, option, oldValue, newValue) {
+  hadSecondChangeCallback = true;
+});
+
+var notCalled = function() { assert.ok(false); }
+c2.on('change#newsection', notCalled);
+c2.removeListener('change#newsection', notCalled);
+
 assert.throws(function() {
   c2.set('invalidsection', 'invalidkey', 'value');
 });
@@ -97,6 +140,11 @@ process.on('exit', function() {
   assert.ok(hadEvent_init);
   assert.equal(c2_changecount, 9);
   assert.equal(c2_errorcount, 0);
+  assert.equal(c2_change_default, 1);
+  assert.equal(c2_change_section, 4);
+  assert.equal(c2_change_typed, 2);
+  assert.equal(c2_change_newsection, 2);
+  assert.ok(hadSecondChangeCallback);
 });
 
 assert.equal(c2.getint('typed', 'intdata'), 4711);
