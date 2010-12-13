@@ -147,9 +147,28 @@ process.on('exit', function() {
   assert.ok(hadSecondChangeCallback);
 });
 
+// typed getters
 assert.equal(c2.getint('typed', 'intdata'), 4711);
 assert.equal(c2.getfloat('typed', 'intdata'), 4711);
 assert.equal(c2.getfloat('typed', 'floatdata'), 47.11);
 assert.equal(c2.getboolean('typed', 'booldata'), true);
 assert.equal(c2.getboolean('typed', 'booldata2'), true);
 assert.deepEqual(c2.getJSON('typed', 'jsondata'), {a:'b', c:'d'});
+
+// getters with local defaults (valid cases)
+assert.equal(c2.get('typed', 'intdata', ''), '4711');
+assert.equal(c2.getint('typed', 'intdata', 1), 4711);
+assert.equal(c2.getfloat('typed', 'intdata', 1), 4711);
+assert.equal(c2.getfloat('typed', 'floatdata', 1.1), 47.11);
+assert.equal(c2.getboolean('typed', 'booldata', false), true);
+assert.equal(c2.getboolean('typed', 'booldata2', false), true);
+assert.deepEqual(c2.getJSON('typed', 'jsondata', '{}'), {a:'b', c:'d'});
+// getters with local defaults (invalid cases where default will be used)
+assert.equal(c2.get('typed', 'invalid', '4711'), '4711');
+assert.equal(c2.getint('typed', 'invalid', '4711'), 4711);
+assert.equal(c2.getfloat('typed', 'invalid', '4711'), 4711);
+assert.equal(c2.getfloat('typed', 'invalid', '47.11'), 47.11);
+assert.equal(c2.getboolean('typed', 'invalid', 'false'), false);
+assert.equal(c2.getboolean('typed', 'invalid', 'true'), true);
+assert.deepEqual(c2.getJSON('typed', 'jsondata', '{"a":"b","c":"d"}'), {a:'b', c:'d'});
+
